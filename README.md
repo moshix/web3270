@@ -78,12 +78,13 @@ When `-lock` is specified, the host and port fields in the browser are disabled 
 
 ### 🖵 Terminal Models
 
-| Model | Dimensions | Use Case               |
-|-------|-----------|------------------------|
-| 2     | 24 × 80   | Standard 3270          |
-| 3     | 32 × 80   | Extended rows          |
-| 4     | 43 × 80   | Large screen (default) |
-| 5     | 27 × 132  | Wide format            |
+| Model  | Dimensions| Use Case               |
+|--------|-----------|------------------------|
+| 2      | 24 × 80   | Standard 3270          |
+| 3      | 32 × 80   | Extended rows          |
+| 4      | 43 × 80   | Large screen (default) |
+| 5      | 27 × 132  | Wide format            |
+| custom |           | up to 90x250           |
 
 ### 🌍 Supported Codepages
 
