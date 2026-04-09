@@ -295,9 +295,7 @@ When enabled in Settings, web3270 automatically reconnects after a dropped conne
 The bottom status bar provides at-a-glance information:
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ Connected  Row: 21  Col: 36  OVR  Connected to host (Model 3) 1 min   web3270 v4.x.x.x ⓘ │
-└─────────────────────────────────────────────────────────────────────────────┘
+Connected  Row: 21  Col: 36  OVR  Connected to host (Model 3) 1 min   web3270 v4.x.x.x ⓘ
 ```
 
 | Element         | Description                                    |
