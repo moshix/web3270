@@ -1,63 +1,89 @@
 # 🖥️ web3270 — Browser-Based 3270 Terminal Emulator
 
-> **A modern, full-featured TN3270 terminal emulator that runs entirely in your browser.**
+> **A modern, full-featured TN3270 terminal emulator that runs entirely in your browser. Single binary, zero dependencies.**
 
 ---
 
 ## 📦 Installation
 
-### Prerequisites
+### Download
 
-- A working **TSU/3270BBS** installation (see main README)
-- A modern web browser (Chrome, Firefox, Edge, Safari)
+Pre-built binaries are available for all major platforms:
 
-### Enable web3270
+| Platform         | Binary Name                          |
+|------------------|--------------------------------------|
+| Linux (AMD64)    | `web3270-x.x.x.x-linux-amd64`       |
+| Linux (ARM64)    | `web3270-x.x.x.x-linux-arm64`       |
+| macOS (Intel)    | `web3270-x.x.x.x-darwin-amd64`      |
+| macOS (Apple Silicon) | `web3270-x.x.x.x-darwin-arm64` |
+| Windows (AMD64)  | `web3270-x.x.x.x-windows-amd64.exe` |
 
-1. Open `tsu.cnf` and ensure the HTTP server is enabled:
+### Build from Source
 
-   ```ini
-   start_HTTPD=yes
-   httpd_port=9000
-   ```
+Requires Go 1.21+.
 
-   For HTTPS (recommended for production):
+```bash
+./build_web3270.bash
+```
 
-   ```ini
-   https_port=9443
-   tlscert=cert.pem
-   tlskey=key.pem
-   ```
+Binaries are placed in the `bin/` directory.
 
-2. Start (or restart) the 3270BBS binary:
+### Quick Start
 
-   ```bash
-   ./3270BBS
-   ```
+```bash
+# Start web3270 on port 8080, pointing at a mainframe host
+./web3270 -listen :8080 -host mainframe.example.com -port 3270
+```
 
-3. Open your browser and navigate to:
+Then open your browser to `http://localhost:8080` — no plugins, no Java applets, no native installs.
 
-   ```
-   http://your-server:9000/web3270/
-   ```
+---
 
-   Or for HTTPS:
+## ⚙️ Command-Line Options
 
-   ```
-   https://your-server:9443/web3270/
-   ```
+```
+Usage: web3270 [-listen :port] [-host hostname] [-port tn3270port]
+               [-model 3279-N] [-lock] [-tls-cert file -tls-key file]
+```
 
-That's it — no plugins, no Java applets, no native installs.
+| Flag           | Description                                      | Default          |
+|----------------|--------------------------------------------------|------------------|
+| `-listen`      | HTTP/HTTPS listen address                        | `:8080`          |
+| `-host`        | Default TN3270 host shown in the connection form | `localhost`      |
+| `-port`        | Default TN3270 port shown in the connection form | `3270`           |
+| `-model`       | Terminal model: `3279-2`, `3279-3`, or `3279-4`  | `3279-4`         |
+| `-lock`        | Lock host/port — users cannot change the target  | off              |
+| `-tls-cert`    | TLS certificate file (enables HTTPS)             | —                |
+| `-tls-key`     | TLS private key file (requires `-tls-cert`)      | —                |
+
+### Examples
+
+```bash
+# Basic — connect to a local MVS system
+./web3270 -listen :8080 -host localhost -port 3270
+
+# HTTPS with locked host (kiosk mode)
+./web3270 -listen :443 -host mvs.example.com -port 2300 -lock \
+          -tls-cert cert.pem -tls-key key.pem
+
+# Use a smaller terminal model
+./web3270 -listen :9090 -host zos.internal -port 3270 -model 3279-2
+```
+
+### Kiosk Mode (`-lock`)
+
+When `-lock` is specified, the host and port fields in the browser are disabled and the client auto-connects on page load. Ideal for shared terminals, lab environments, or public-facing deployments where users should only connect to one specific host.
 
 ---
 
 ## 🔌 Connecting
 
-| Field      | Description                              | Default  |
-|------------|------------------------------------------|----------|
-| **Host**   | Hostname or IP of the TN3270 server      | —        |
-| **Port**   | TN3270 port                              | `3270`   |
-| **Model**  | Terminal model (see below)               | Model 4  |
-| **Codepage** | EBCDIC codepage for character mapping  | CP 1047  |
+| Field        | Description                              | Default  |
+|--------------|------------------------------------------|----------|
+| **Host**     | Hostname or IP of the TN3270 server      | *(from `-host` flag)* |
+| **Port**     | TN3270 port                              | *(from `-port` flag)* |
+| **Model**    | Terminal model (see below)               | Model 4  |
+| **Codepage** | EBCDIC codepage for character mapping    | CP 1047  |
 
 ### 🖵 Terminal Models
 
@@ -77,17 +103,13 @@ That's it — no plugins, no Java applets, no native installs.
 
 ### URL Parameters
 
-You can bookmark or share connections using URL parameters:
+You can bookmark or share connections using URL query parameters:
 
 ```
-http://your-server:9000/web3270/?host=mainframe.local&port=3270&model=4&codepage=1047
+http://your-server:8080/web3270?host=mvs.example.com&port=3270&model=4&codepage=1047
 ```
 
-Parameters: `host`, `port`, `model`, `codepage`.
-
-### Host/Port Locking (Kiosk Mode)
-
-Administrators can lock web3270 to a specific host and port via server configuration. When locked, the host and port fields are disabled and the client auto-connects on page load — ideal for shared terminals or kiosk deployments.
+Parameters: `host`, `port`, `model`, `codepage`. These override the command-line defaults.
 
 ---
 
@@ -173,15 +195,15 @@ web3270 uses an intelligent **delta rendering** system to minimize bandwidth and
 
 Seven built-in themes — click to switch instantly, no reload needed.
 
-| Theme          | Style                                |
-|----------------|--------------------------------------|
-| **3279**       | 🟢 Authentic IBM 3279 colors (default) |
-| **Chalk**      | 🩵 Soft pastel tones                |
-| **Earthsong**  | 🟤 Natural, warm palette            |
-| **FunForrest** | 🟠 Warm forest colors               |
-| **Kolorit**    | 🟣 Vibrant and bold                 |
-| **Ubuntu**     | 🟡 Dark Ubuntu terminal             |
-| **Green Screen** | 🟩 Classic monochrome green        |
+| Theme            | Style                                  |
+|------------------|----------------------------------------|
+| **3279**         | 🟢 Authentic IBM 3279 colors (default) |
+| **Chalk**        | 🩵 Soft pastel tones                   |
+| **Earthsong**    | 🟤 Natural, warm palette               |
+| **FunForrest**   | 🟠 Warm forest colors                  |
+| **Kolorit**      | 🟣 Vibrant and bold                    |
+| **Ubuntu**       | 🟡 Dark Ubuntu terminal                |
+| **Green Screen** | 🟩 Classic monochrome green            |
 
 Each theme maps all seven 3270 colors (green, blue, red, pink, turquoise, yellow, white) to a coordinated palette. Reverse video, cursors, and field highlights all adapt automatically.
 
@@ -198,9 +220,9 @@ Eight monospace fonts available:
 | Consolas           | Windows-optimized              |
 | Liberation Mono    | Linux standard                 |
 | Fira Code          | Modern monospace               |
-| Source Code Pro     | Adobe professional             |
-| JetBrains Mono     | Developer-focused              |
-| System Mono        | OS default                     |
+| Source Code Pro    | Adobe professional             |
+| JetBrains Mono    | Developer-focused              |
+| System Mono       | OS default                     |
 
 **Font sizes:** 10px, 12px, 14px (default), 16px, 18px, 20px, 24px
 
@@ -268,7 +290,7 @@ When enabled in Settings, web3270 automatically reconnects after a dropped conne
 
 ### 🔒 Security
 
-- **TLS/HTTPS** — WebSocket Secure (wss://) when served over HTTPS
+- **TLS/HTTPS** — Use `-tls-cert` and `-tls-key` to serve over HTTPS with WebSocket Secure (wss://)
 - **Per-IP connection limiting** — Max 5 connections per IP address
 - **Total connection cap** — 50 concurrent WebSocket connections
 - **Message size limit** — 2MB max WebSocket message
