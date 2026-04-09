@@ -18,15 +18,6 @@ Pre-built binaries are available for all major platforms:
 | macOS (Apple Silicon) | `web3270-x.x.x.x-darwin-arm64` |
 | Windows (AMD64)  | `web3270-x.x.x.x-windows-amd64.exe` |
 
-### Build from Source
-
-Requires Go 1.21+.
-
-```bash
-./build_web3270.bash
-```
-
-Binaries are placed in the `bin/` directory.
 
 ### Quick Start
 
