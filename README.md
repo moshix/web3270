@@ -334,7 +334,7 @@ Connected  Row: 21  Col: 36  OVR  Connected to host (Model 3) 1 min   web3270 v4
 
 - Downloads go to browser's download folder (no filesystem access)
 
-![Screenshot](Screenshot 2026-04-09 at 06.41.34.png)
+![Screenshot](web3270.png)
 
 ---
 
